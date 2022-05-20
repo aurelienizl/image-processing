@@ -50,4 +50,7 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Editor trash files
+
 .vscode/c_cpp_properties.json
