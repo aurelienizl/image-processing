@@ -2,7 +2,8 @@
 #define FILTERS_H
 
 #include <stdlib.h>
-#include <SDL.h>
+#include <SDL/SDL.h>
+
 
 //Filters functions:
 
@@ -12,7 +13,6 @@ void invert(SDL_Surface *image_surface, int width, int height);
 void edges_detection(SDL_Surface *image_surface, int threshold, int width, int height);
 void noiseReduction(SDL_Surface *surface, int width, int height);
 void otsu(SDL_Surface *image_surface);
-
 
 
 #endif

@@ -83,7 +83,6 @@ int main(int argc, char *array[])
 
 
     SDL_Surface *image_surface;
-    SDL_Surface *screen_surface;
 
     //initialise sdl
     init_sdl();
@@ -95,33 +94,23 @@ int main(int argc, char *array[])
     int height = image_surface->h;
 
     //Display original image
-    screen_surface = display_image(image_surface);
     //Wait for user press a key
-    wait_for_keypressed();
 
     //Apply filters
 
-    contrast_1(image_surface, 30 );
-    edges_detection(image_surface,1,width,height);
+    
+    //edges_detection(image_surface,1,width,height);
     grayscale(image_surface,  width,  height);
-
+    contrast_1(image_surface, 10 );
     otsu(image_surface);
     noiseReduction(image_surface,  width,  height);
-    invert(image_surface,  width,  height);
 
-
-
-
-    //Show processed image
-    screen_surface = display_image(image_surface);
-    wait_for_keypressed();
 
 
     //Saving image with applied filters
     save(image_surface);
     //clear and exit
     SDL_FreeSurface(image_surface);
-    SDL_FreeSurface(screen_surface);
 
     return 0;
 }
