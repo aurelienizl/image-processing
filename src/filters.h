@@ -1,4 +1,4 @@
-#ifndef Filters_H_
+#ifndef FILTERS_H
 #define FILTERS_H
 
 #include <stdlib.h>
