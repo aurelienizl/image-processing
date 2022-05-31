@@ -41,41 +41,38 @@ void invert(SDL_Surface *image_surface)
     }
 }
 
-void contrast_v1(SDL_Surface* img, int delta)
+void contrast_v1(SDL_Surface* image_surface, int delta)
 {
     double factor = (259 * (delta + 255)) / (255.0 * (259.0 - delta));
     Uint32 pixel;
     Uint8 r, g, b;
-    
-    int w = img -> w;
-    int h = img -> h;
 
     if (delta == 259){ delta = 258;}
     
-    for (int i = 0; i < w;i++)
+    for (int i = 0; i < image_surface -> w;i++)
     {
-        for(int j = 0; j< h; j++)
+        for(int j = 0; j< image_surface -> h; j++)
         {
-            pixel = get_pixel(img, i,j);
-            SDL_GetRGB(pixel, img->format, &r,&g,&b);
+            pixel = get_pixel(image_surface, i,j);
+            SDL_GetRGB(pixel, image_surface->format, &r,&g,&b);
             r = StayOnInterval256(factor * (r - 128) + 128);
             g = StayOnInterval256(factor * (g - 128) + 128);
             b = StayOnInterval256(factor * (b - 128) + 128);
-            pixel = SDL_MapRGB(img -> format,r,g,b);
-            put_pixel(img,i,j,pixel);
+            pixel = SDL_MapRGB(image_surface -> format,r,g,b);
+            put_pixel(image_surface,i,j,pixel);
         }
     }
 }
 
-void edges_detection(SDL_Surface *image_surface,int threshold, int width, int height)
+void edges_detection(SDL_Surface *image_surface,int threshold)
 {
     Uint8 r_old, g_old, b_old;
     Uint8 r_left, g_left, b_left;
     Uint8 r_bottom, g_bottom, b_bottom;
 
-    for (int y = 0; y < height - 1; y++)
+    for (int y = 0; y < image_surface -> w - 1; y++)
     {
-        for (int x = 1; x < width; x++)
+        for (int x = 1; x < image_surface -> h; x++)
         {
             Uint32 old_pixel = get_pixel(image_surface, x, y);
             Uint32 left_pixel = get_pixel(image_surface, x - 1, y);
@@ -99,13 +96,13 @@ void edges_detection(SDL_Surface *image_surface,int threshold, int width, int he
     }
 }
 
-void noiseReduction(SDL_Surface *surface, int width, int height)
+void noiseReduction(SDL_Surface *image_surface)
 {
     int table[5];
 
-    for (int i = 0; i < width; i++)
+    for (int i = 0; i < image_surface -> w; i++)
     {
-        for (int j = 0; j < height; j++)
+        for (int j = 0; j < image_surface -> h; j++)
         {
 
             for (int k = j; k <= j + 4; k++)
@@ -114,92 +111,92 @@ void noiseReduction(SDL_Surface *surface, int width, int height)
                 {
                     if (k == 0)
                     {
-                        table[0] = get_pixel(surface, i, k);
-                        table[1] = get_pixel(surface, i, k);
-                        table[2] = get_pixel(surface, i, k);
-                        table[3] = get_pixel(surface, i, k + 1);
-                        table[4] = get_pixel(surface, i + 1, k);
+                        table[0] = get_pixel(image_surface, i, k);
+                        table[1] = get_pixel(image_surface, i, k);
+                        table[2] = get_pixel(image_surface, i, k);
+                        table[3] = get_pixel(image_surface, i, k + 1);
+                        table[4] = get_pixel(image_surface, i + 1, k);
                         break;
                     }
-                    if (k == height)
+                    if (k == image_surface -> h)
                     {
-                        table[0] = get_pixel(surface, i, k);
-                        table[1] = get_pixel(surface, i, k - 1);
-                        table[2] = get_pixel(surface, i, k);
-                        table[3] = get_pixel(surface, i, k);
-                        table[4] = get_pixel(surface, i + 1, k);
+                        table[0] = get_pixel(image_surface, i, k);
+                        table[1] = get_pixel(image_surface, i, k - 1);
+                        table[2] = get_pixel(image_surface, i, k);
+                        table[3] = get_pixel(image_surface, i, k);
+                        table[4] = get_pixel(image_surface, i + 1, k);
                         break;
                     }
                     else
                     {
-                        table[0] = get_pixel(surface, i, k);
-                        table[1] = get_pixel(surface, i, k - 1);
-                        table[2] = get_pixel(surface, i, k);
-                        table[3] = get_pixel(surface, i, k + 1);
-                        table[4] = get_pixel(surface, i + 1, k);
+                        table[0] = get_pixel(image_surface, i, k);
+                        table[1] = get_pixel(image_surface, i, k - 1);
+                        table[2] = get_pixel(image_surface, i, k);
+                        table[3] = get_pixel(image_surface, i, k + 1);
+                        table[4] = get_pixel(image_surface, i + 1, k);
                         break;
                     }
                 }
-                if (i == width)
+                if (i == image_surface -> w)
                 {
                     if (k == 0)
                     {
-                        table[0] = get_pixel(surface, i, k);
-                        table[1] = get_pixel(surface, i, k);
-                        table[2] = get_pixel(surface, i - 1, k);
-                        table[3] = get_pixel(surface, i, k + 1);
-                        table[4] = get_pixel(surface, i, k);
+                        table[0] = get_pixel(image_surface, i, k);
+                        table[1] = get_pixel(image_surface, i, k);
+                        table[2] = get_pixel(image_surface, i - 1, k);
+                        table[3] = get_pixel(image_surface, i, k + 1);
+                        table[4] = get_pixel(image_surface, i, k);
                         break;
                     }
-                    if (k == height)
+                    if (k == image_surface -> h)
                     {
-                        table[0] = get_pixel(surface, i, k);
-                        table[1] = get_pixel(surface, i, k - 1);
-                        table[2] = get_pixel(surface, i - 1, k);
-                        table[3] = get_pixel(surface, i, k);
-                        table[4] = get_pixel(surface, i, k);
+                        table[0] = get_pixel(image_surface, i, k);
+                        table[1] = get_pixel(image_surface, i, k - 1);
+                        table[2] = get_pixel(image_surface, i - 1, k);
+                        table[3] = get_pixel(image_surface, i, k);
+                        table[4] = get_pixel(image_surface, i, k);
                         break;
                     }
                     else
                     {
-                        table[0] = get_pixel(surface, i, k);
-                        table[1] = get_pixel(surface, i, k - 1);
-                        table[2] = get_pixel(surface, i - 1, k);
-                        table[3] = get_pixel(surface, i, k + 1);
-                        table[4] = get_pixel(surface, i, k);
+                        table[0] = get_pixel(image_surface, i, k);
+                        table[1] = get_pixel(image_surface, i, k - 1);
+                        table[2] = get_pixel(image_surface, i - 1, k);
+                        table[3] = get_pixel(image_surface, i, k + 1);
+                        table[4] = get_pixel(image_surface, i, k);
                         break;
                     }
                 }
                 if (k == 0)
                 {
-                    table[0] = get_pixel(surface, i, k);
-                    table[1] = get_pixel(surface, i, k);
-                    table[2] = get_pixel(surface, i - 1, k);
-                    table[3] = get_pixel(surface, i, k + 1);
-                    table[4] = get_pixel(surface, i + 1, k);
+                    table[0] = get_pixel(image_surface, i, k);
+                    table[1] = get_pixel(image_surface, i, k);
+                    table[2] = get_pixel(image_surface, i - 1, k);
+                    table[3] = get_pixel(image_surface, i, k + 1);
+                    table[4] = get_pixel(image_surface, i + 1, k);
                     break;
                 }
-                if (k == height)
+                if (k == image_surface -> h)
                 {
-                    table[0] = get_pixel(surface, i, k);
-                    table[1] = get_pixel(surface, i, k - 1);
-                    table[2] = get_pixel(surface, i - 1, k);
-                    table[3] = get_pixel(surface, i, k);
-                    table[4] = get_pixel(surface, i + 1, k);
+                    table[0] = get_pixel(image_surface, i, k);
+                    table[1] = get_pixel(image_surface, i, k - 1);
+                    table[2] = get_pixel(image_surface, i - 1, k);
+                    table[3] = get_pixel(image_surface, i, k);
+                    table[4] = get_pixel(image_surface, i + 1, k);
                     break;
                 }
                 else
                 {
-                    table[0] = get_pixel(surface, i, k);
-                    table[1] = get_pixel(surface, i, k - 1);
-                    table[2] = get_pixel(surface, i - 1, k);
-                    table[3] = get_pixel(surface, i, k + 1);
-                    table[4] = get_pixel(surface, i + 1, k);
+                    table[0] = get_pixel(image_surface, i, k);
+                    table[1] = get_pixel(image_surface, i, k - 1);
+                    table[2] = get_pixel(image_surface, i - 1, k);
+                    table[3] = get_pixel(image_surface, i, k + 1);
+                    table[4] = get_pixel(image_surface, i + 1, k);
                     break;
                 }
             }
             array_select_sort(table, 5);
-            put_pixel(surface, i, j, table[2]);
+            put_pixel(image_surface, i, j, table[2]);
         }
     }
 }
