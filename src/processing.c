@@ -73,7 +73,6 @@ void save(SDL_Surface *image_surface)
 void applyFilters(SDL_Surface *image_surface)
 {
     //Put filters here\\!
-    blur(image_surface);
     save(image_surface);
 }
 
