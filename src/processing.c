@@ -69,11 +69,12 @@ void SDL_FreeSurface(SDL_Surface *surface);
 
 void save(SDL_Surface *image_surface)
 {
-    //Save original image as output.bmp
+    // Save original image as output.bmp
     SDL_SaveBMP(image_surface, "output.bmp");
 }
 
-void applyFilters(SDL_Surface *image_surface){
+void applyFilters(SDL_Surface *image_surface)
+{
     otsu(image_surface);
 }
 
@@ -86,11 +87,10 @@ int main(int argc, char *array[])
     }
 
     SDL_Surface *image_surface;
-    
 
-    //initialise sdl
+    // initialise sdl
     init_sdl();
-    //Load image into memory from path
+    // Load image into memory from path
     image_surface = load_image(array[1]);
 
     if (*array[2] == 49)
@@ -102,20 +102,14 @@ int main(int argc, char *array[])
 
         display_image(image_surface);
         wait_for_keypressed();
-    
     }
     else
     {
         applyFilters(image_surface);
     }
-    
 
-    
-    
-   
-
-    //Saving image with applied filters
-    //clear and exit
+    // Saving image with applied filters
+    // clear and exit
     SDL_FreeSurface(image_surface);
 
     return 0;
