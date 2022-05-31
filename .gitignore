@@ -58,3 +58,4 @@ dkms.conf
 .vscode/dryrun.log
 .vscode/settings.json
 .vscode/targets.log
+src/.vscode/settings.json

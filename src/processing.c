@@ -1,6 +1,3 @@
-#include <err.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
 #include "filters.h"
 
 void init_sdl()
@@ -75,14 +72,17 @@ void save(SDL_Surface *image_surface)
 
 void applyFilters(SDL_Surface *image_surface)
 {
-    otsu(image_surface);
+    //Put filters here\\!
+    blur(image_surface);
+    save(image_surface);
 }
 
 int main(int argc, char *array[])
 {
+    //Exit if inputs are not correct 
     if (argc != 3)
     {
-        printf("Usage: ./processing [PATH_TO_FILE]\n");
+        printf("Usage: ./processing [PATH_TO_FILE] [DISPLAY PROCESS 1 OR 0]\n");
         return EXIT_FAILURE;
     }
 
@@ -90,9 +90,11 @@ int main(int argc, char *array[])
 
     // initialise sdl
     init_sdl();
+
     // Load image into memory from path
     image_surface = load_image(array[1]);
 
+    
     if (*array[2] == 49)
     {
         display_image(image_surface);
