@@ -1,38 +1,32 @@
 #include "SDL/SDL.h"
 #include "tools.h"
 
-void grayscale(SDL_Surface *image_surface, int width, int height)
+void grayscale(SDL_Surface *image_surface)
 {
     Uint8 r, g, b;
-    double val;
 
-    for (int i = 0; i < width; i++)
+    for (int i = 0; i < image_surface->w; i++)
     {
-        for (int j = 0; j < height; j++)
+        for (int j = 0; j < image_surface->h; j++)
         {
             Uint32 pixel = get_pixel(image_surface, i, j);
             SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
 
-            val = 0.3 * (double) r + 0.59 * (double) g + 0.11 * (double) b;
-            // or : val = (r + g + b)/3;
+            r =  0.3 * (double) r + 0.59 * (double) g + 0.11 * (double) b;
 
-            r = val;
-            g = val;
-            b = val;
-
-            pixel = SDL_MapRGB(image_surface->format, r, g, b);
+            pixel = SDL_MapRGB(image_surface->format, r, r, r);
             put_pixel(image_surface, i, j, pixel);
         }
     }
 }
 
-void invert(SDL_Surface *image_surface, int width, int height)
+void invert(SDL_Surface *image_surface)
 {
     Uint8 r, g, b;
 
-    for (int i = 0; i < width; i++)
+    for (int i = 0; i < image_surface->w; i++)
     {
-        for (int j = 0; j < height; j++)
+        for (int j = 0; j < image_surface->h; j++)
         {
             Uint32 pixel = get_pixel(image_surface, i, j);
             SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
@@ -47,21 +41,17 @@ void invert(SDL_Surface *image_surface, int width, int height)
     }
 }
 
-void contrast_1(SDL_Surface* img, int delta)
+void contrast_v1(SDL_Surface* img, int delta)
 {
     double factor = (259 * (delta + 255)) / (255.0 * (259.0 - delta));
     Uint32 pixel;
-    Uint8 r;
-    Uint8 g;
-    Uint8 b;
+    Uint8 r, g, b;
+    
     int w = img -> w;
     int h = img -> h;
 
-    if (delta == 259)
-    {
-        delta = 258;
-    }
-
+    if (delta == 259){ delta = 258;}
+    
     for (int i = 0; i < w;i++)
     {
         for(int j = 0; j< h; j++)
