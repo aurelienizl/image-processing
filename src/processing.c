@@ -73,42 +73,48 @@ void save(SDL_Surface *image_surface)
     SDL_SaveBMP(image_surface, "output.bmp");
 }
 
+void applyFilters(SDL_Surface *image_surface){
+    otsu(image_surface);
+}
+
 int main(int argc, char *array[])
 {
-    if (argc != 2)
+    if (argc != 3)
     {
         printf("Usage: ./processing [PATH_TO_FILE]\n");
         return EXIT_FAILURE;
     }
 
-
     SDL_Surface *image_surface;
+    
 
     //initialise sdl
     init_sdl();
     //Load image into memory from path
     image_surface = load_image(array[1]);
 
-    //Save picture size
-    int width = image_surface->w;
-    int height = image_surface->h;
+    if (*array[2] == 49)
+    {
+        display_image(image_surface);
+        wait_for_keypressed();
 
-    //Display original image
-    //Wait for user press a key
+        applyFilters(image_surface);
 
-    //Apply filters
+        display_image(image_surface);
+        wait_for_keypressed();
+    
+    }
+    else
+    {
+        applyFilters(image_surface);
+    }
+    
 
     
-    //edges_detection(image_surface,1,width,height);
-    grayscale(image_surface,  width,  height);
-    contrast_1(image_surface, 10 );
-    otsu(image_surface);
-    noiseReduction(image_surface,  width,  height);
-
-
+    
+   
 
     //Saving image with applied filters
-    save(image_surface);
     //clear and exit
     SDL_FreeSurface(image_surface);
 
