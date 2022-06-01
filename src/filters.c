@@ -1,6 +1,6 @@
 #include "tools.h"
 
-//Apply grayscale
+// Apply grayscale
 void grayscale(SDL_Surface *image_surface)
 {
     Uint8 r, g, b;
@@ -12,7 +12,7 @@ void grayscale(SDL_Surface *image_surface)
             Uint32 pixel = get_pixel(image_surface, i, j);
             SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
 
-            r =  0.3 * (double) r + 0.59 * (double) g + 0.11 * (double) b;
+            r = 0.3 * (double)r + 0.59 * (double)g + 0.11 * (double)b;
 
             pixel = SDL_MapRGB(image_surface->format, r, r, r);
             put_pixel(image_surface, i, j, pixel);
@@ -20,7 +20,7 @@ void grayscale(SDL_Surface *image_surface)
     }
 }
 
-//Invert all colors from surface
+// Invert all colors from surface
 void invert(SDL_Surface *image_surface)
 {
     Uint8 r, g, b;
@@ -42,52 +42,54 @@ void invert(SDL_Surface *image_surface)
     }
 }
 
-//Increases or reduces the contrast 
-void contrast_v1(SDL_Surface* image_surface, int delta)
+// Increases or reduces the contrast
+void contrast_v1(SDL_Surface *image_surface, int delta)
 {
     double factor = (259 * (delta + 255)) / (255.0 * (259.0 - delta));
     Uint32 pixel;
     Uint8 r, g, b;
 
-    if (delta == 259){ delta = 258;}
-    
-    for (int i = 0; i < image_surface -> w;i++)
+    if (delta == 259)
     {
-        for(int j = 0; j< image_surface -> h; j++)
+        delta = 258;
+    }
+
+    for (int i = 0; i < image_surface->w; i++)
+    {
+        for (int j = 0; j < image_surface->h; j++)
         {
-            pixel = get_pixel(image_surface, i,j);
-            SDL_GetRGB(pixel, image_surface->format, &r,&g,&b);
+            pixel = get_pixel(image_surface, i, j);
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
             r = StayOnInterval256(factor * (r - 128) + 128);
             g = StayOnInterval256(factor * (g - 128) + 128);
             b = StayOnInterval256(factor * (b - 128) + 128);
-            pixel = SDL_MapRGB(image_surface -> format,r,g,b);
-            put_pixel(image_surface,i,j,pixel);
+            pixel = SDL_MapRGB(image_surface->format, r, g, b);
+            put_pixel(image_surface, i, j, pixel);
         }
     }
 }
 
-
-//Shows borders from objects inside surface (by color difference)
-void edges_detection(SDL_Surface *image_surface,int threshold)
+// Shows borders from objects inside surface (by color difference)
+void edges_detection(SDL_Surface *image_surface, int threshold)
 {
     Uint8 r_old, g_old, b_old;
     Uint8 r_left, g_left, b_left;
     Uint8 r_bottom, g_bottom, b_bottom;
 
-    for (int y = 0; y < image_surface -> w - 1; y++)
+    for (int y = 0; y < image_surface->w - 1; y++)
     {
-        for (int x = 1; x < image_surface -> h; x++)
+        for (int x = 1; x < image_surface->h; x++)
         {
             Uint32 old_pixel = get_pixel(image_surface, x, y);
             Uint32 left_pixel = get_pixel(image_surface, x - 1, y);
-            Uint32 bottom_pixel =  get_pixel(image_surface, x, y + 1);
+            Uint32 bottom_pixel = get_pixel(image_surface, x, y + 1);
             SDL_GetRGB(old_pixel, image_surface->format, &r_old, &g_old, &b_old);
             SDL_GetRGB(left_pixel, image_surface->format, &r_left, &g_left, &b_left);
             SDL_GetRGB(bottom_pixel, image_surface->format, &r_bottom, &g_bottom, &b_bottom);
 
-            int oldValue = (r_old + g_old + b_old)/3;
-            int leftValue = (r_left + g_left + b_left)/3;
-            int bottomValue = (r_bottom + g_bottom + b_bottom)/3;
+            int oldValue = (r_old + g_old + b_old) / 3;
+            int leftValue = (r_left + g_left + b_left) / 3;
+            int bottomValue = (r_bottom + g_bottom + b_bottom) / 3;
 
             if (abs(oldValue - leftValue) <= threshold || abs(oldValue - bottomValue) <= threshold)
             {
@@ -95,70 +97,71 @@ void edges_detection(SDL_Surface *image_surface,int threshold)
                 pixel = SDL_MapRGB(image_surface->format, 255, 255, 255);
                 put_pixel(image_surface, x, y, pixel);
             }
-
         }
     }
 }
 
-//Used by [blur] function, return the average of 9 pixels in an array
-Uint32 average_blur(SDL_Surface *image_surface,int array[])
+// Used by [blur] function, return the average of 9 pixels in an array
+Uint32 average_blur(SDL_Surface *image_surface, int array[])
 {
     unsigned int average_red = 0;
     unsigned int average_green = 0;
     unsigned int average_blue = 0;
 
-    Uint8 r,g,b;
+    Uint8 r, g, b;
 
     for (size_t i = 0; i < 9; i++)
     {
-        SDL_GetRGB(array[i],image_surface->format,&r,&g,&b);
+        SDL_GetRGB(array[i], image_surface->format, &r, &g, &b);
         average_red += r;
         average_green += g;
         average_blue += b;
     }
-    
+
     average_red /= 9;
     average_green /= 9;
     average_blue /= 9;
 
-    Uint32 pixel = SDL_MapRGB(image_surface->format, average_red,average_green,average_blue);
+    Uint32 pixel = SDL_MapRGB(image_surface->format, average_red, average_green, average_blue);
     return pixel;
 }
 
-//Blur filter, using the average of 3x3 pixels 
-void blur(SDL_Surface *image_surface)
+// Blur filter, using the average of 3x3 pixels
+void blur(SDL_Surface *image_surface, int delta)
 {
-    int array[9];
-    SDL_Surface *blur_surface = image_surface;
-    for (int i = 1; i < image_surface->w - 1; i++)
+    for (int iteration = 0; iteration < delta; iteration++)
     {
-        for (int j = 1; j < image_surface->h - 1; j++)
+        int array[9];
+        SDL_Surface *blur_surface = image_surface;
+        for (int i = 1; i < image_surface->w - 1; i++)
         {
-            int index = 0;
-            for (int k = i-1; k <= i + 1; k++)
+            for (int j = 1; j < image_surface->h - 1; j++)
             {
-                for (int l = j - 1; l <= j + 1; l++)
+                int index = 0;
+                for (int k = i - 1; k <= i + 1; k++)
                 {
-                    array[index] = get_pixel(image_surface,k,l);
-                    index++;
+                    for (int l = j - 1; l <= j + 1; l++)
+                    {
+                        array[index] = get_pixel(image_surface, k, l);
+                        index++;
+                    }
                 }
+                put_pixel(blur_surface, i, j, average_blur(image_surface, array));
             }
-            put_pixel(blur_surface,i,j,average_blur(image_surface,array));
         }
+        *image_surface = *blur_surface;
     }
-    *image_surface = *blur_surface;
 }
 
-//Reduce noise (works only for 1x1 pixel and binarized surface)
+// Reduce noise (works only for 1x1 pixel and binarized surface)
 void noiseReduction(SDL_Surface *image_surface)
 {
     int table[5];
 
-    for (int i = 0; i < image_surface -> w; i++)
+    for (int i = 0; i < image_surface->w; i++)
     {
-        for (int j = 0; j < image_surface -> h; j++)
+        for (int j = 0; j < image_surface->h; j++)
         {
-
             for (int k = j; k <= j + 4; k++)
             {
                 if (i == 0)
@@ -172,7 +175,7 @@ void noiseReduction(SDL_Surface *image_surface)
                         table[4] = get_pixel(image_surface, i + 1, k);
                         break;
                     }
-                    if (k == image_surface -> h)
+                    if (k == image_surface->h)
                     {
                         table[0] = get_pixel(image_surface, i, k);
                         table[1] = get_pixel(image_surface, i, k - 1);
@@ -191,7 +194,7 @@ void noiseReduction(SDL_Surface *image_surface)
                         break;
                     }
                 }
-                if (i == image_surface -> w)
+                if (i == image_surface->w)
                 {
                     if (k == 0)
                     {
@@ -202,7 +205,7 @@ void noiseReduction(SDL_Surface *image_surface)
                         table[4] = get_pixel(image_surface, i, k);
                         break;
                     }
-                    if (k == image_surface -> h)
+                    if (k == image_surface->h)
                     {
                         table[0] = get_pixel(image_surface, i, k);
                         table[1] = get_pixel(image_surface, i, k - 1);
@@ -230,7 +233,7 @@ void noiseReduction(SDL_Surface *image_surface)
                     table[4] = get_pixel(image_surface, i + 1, k);
                     break;
                 }
-                if (k == image_surface -> h)
+                if (k == image_surface->h)
                 {
                     table[0] = get_pixel(image_surface, i, k);
                     table[1] = get_pixel(image_surface, i, k - 1);
@@ -255,7 +258,56 @@ void noiseReduction(SDL_Surface *image_surface)
     }
 }
 
-//Create a histogram 
+//Apply simple binarization using simple comparaison to average surface pixel value
+//Works better on grayscale image 
+void binarize(SDL_Surface *image_surface, int delta)
+{
+    Uint8 r,g,b;
+    unsigned long red = 0, green = 0, blue = 0, average;
+    for (int i = 0; i < image_surface->w; i++)
+    {
+        for (int j = 0; j < image_surface->h; j++)
+        {
+            Uint32 pixel = get_pixel(image_surface,i,j);
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+            red += r;
+            green += g;
+            blue += b;
+        }
+    }
+    average = (red + green + blue) / (3 * image_surface->w * image_surface->h);
+    average = StayOnInterval256(-((delta * average) / 100) + average);
+    for (int i = 0; i < image_surface->w; i++)
+    {
+        for (int j = 0; j < image_surface->h; j++)
+        {
+            Uint32 pixel = get_pixel(image_surface, i, j);
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+
+            if ((unsigned long) ((r + g + b)/3) > average)
+            {
+                r = 0;
+                g = 0;
+                b = 0;
+            }
+            else
+            {
+                r = 255;
+                g = 255;
+                b = 255;
+            }
+            
+            
+
+            pixel = SDL_MapRGB(image_surface->format, r, g, b);
+            put_pixel(image_surface, i, j, pixel);
+        }
+        
+    }
+    
+}
+
+// Create a histogram
 void init_hist(SDL_Surface *image_surface, int width, int height, float *hist)
 {
     Uint8 r, g, b;
@@ -312,7 +364,7 @@ Uint8 otsu_threshold(float *hist)
     return (Uint8)threshold;
 }
 
-//OTSU filters, for more info see wiki 
+// OTSU filters, for more info see wiki
 void otsu(SDL_Surface *image_surface)
 {
     size_t width = image_surface->w;
