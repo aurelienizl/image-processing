@@ -8,7 +8,7 @@ LDLIBS= `pkg-config --libs sdl SDL_image` -lm -export-dynamic
 
 all: processing
 
-processing: processing.o filters.o tools.o
+processing: processing.o filters/filters.o tools/tools.o segmentation/segmentation.o
 
 clean:
 	${RM} *.o

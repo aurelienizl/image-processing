@@ -1,4 +1,4 @@
-#include "tools.h"
+#include "../tools/tools.h"
 
 // Apply grayscale
 void grayscale(SDL_Surface *image_surface)

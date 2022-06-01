@@ -1,4 +1,5 @@
-#include "filters.h"
+#include "filters/filters.h"
+#include "segmentation/segmentation.h"
 
 void init_sdl()
 {
@@ -72,13 +73,21 @@ void save(SDL_Surface *image_surface)
 
 void applyFilters(SDL_Surface *image_surface)
 {
-    //Put filters here\\!
+    contrast_v1(image_surface, 10);
+    binarize(image_surface, 90);
+    invert(image_surface);
+    save(image_surface);
+}
+
+void applySegmentation(SDL_Surface *image_surface)
+{
+    detect_lines(image_surface);
     save(image_surface);
 }
 
 int main(int argc, char *array[])
 {
-    //Exit if inputs are not correct 
+    // Exit if inputs are not correct
     if (argc != 3)
     {
         printf("Usage: ./processing [PATH_TO_FILE] [DISPLAY PROCESS 1 OR 0]\n");
@@ -93,13 +102,13 @@ int main(int argc, char *array[])
     // Load image into memory from path
     image_surface = load_image(array[1]);
 
-    
     if (*array[2] == 49)
     {
         display_image(image_surface);
         wait_for_keypressed();
 
         applyFilters(image_surface);
+        applySegmentation(image_surface);
 
         display_image(image_surface);
         wait_for_keypressed();
@@ -107,6 +116,7 @@ int main(int argc, char *array[])
     else
     {
         applyFilters(image_surface);
+        applySegmentation(image_surface);
     }
 
     // Saving image with applied filters
