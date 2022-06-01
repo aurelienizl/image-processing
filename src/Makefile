@@ -15,3 +15,10 @@ clean:
 	${RM} *.d
 	${RM} *.bmp
 	${RM} processing
+	${RM} filters/*.o
+	${RM} filters/*.d
+	${RM} segmentation/*.o
+	${RM} segmentation/*.d
+	${RM} tools/*.o
+	${RM} tools/*.d
+	
