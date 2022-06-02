@@ -7,5 +7,6 @@
 #include <SDL/SDL_image.h>
 
 void detect_lines_v1(SDL_Surface *image_surface);
+void detect_lines_v2(SDL_Surface *image_surface);
 
 #endif
