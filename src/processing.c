@@ -81,7 +81,7 @@ void applyFilters(SDL_Surface *image_surface)
 
 void applySegmentation(SDL_Surface *image_surface)
 {
-    detect_lines_v1(image_surface);
+    detect_lines_v2(image_surface);
     save(image_surface);
 }
 
