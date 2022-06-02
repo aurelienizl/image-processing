@@ -73,8 +73,8 @@ void save(SDL_Surface *image_surface)
 
 void applyFilters(SDL_Surface *image_surface)
 {
-    contrast_v1(image_surface, 100);
-    binarize(image_surface, 10);
+    contrast_v1(image_surface, 10);
+    binarize(image_surface, 50);
     invert(image_surface);
     save(image_surface);
 }

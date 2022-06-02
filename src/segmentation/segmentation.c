@@ -56,11 +56,10 @@ void detect_lines_v1(SDL_Surface *image_surface)
     }
 }
 
-#include "../tools/tools.h"
-
 void detect_lines_array(int *array, int len)
 {
-    int lines = 9;
+    int lines = 10;
+    int lines_scale = 30;
     for (int i = 0; i < lines; i++)
     {
         int max = array[0];
@@ -75,6 +74,33 @@ void detect_lines_array(int *array, int len)
             }
         }
         array[index] = -1;
+        for (int i = 1; i < lines_scale; i++)
+        {
+            if (index + i < len)
+            {
+                array[index + i] = 0;
+            }
+            if (index - i >= 0)
+            {
+                array[index - i] = 0;
+            }
+        }
+    }
+}
+
+void remove_background(SDL_Surface *image_surface, Uint32 pixel)
+{
+    Uint32 white = SDL_MapRGB(image_surface->format, 255, 255, 255);
+    for (int i = 0; i < image_surface->w; i++)
+    {
+        for (int j = 0; j < image_surface->h; j++)
+        {
+            if (get_pixel(image_surface, i, j) == pixel)
+            {
+                return;
+            }
+            put_pixel(image_surface, i, j, white);
+        }
     }
 }
 
@@ -113,6 +139,7 @@ void detect_lines_v2(SDL_Surface *image_surface)
     }
 
     Uint32 red = SDL_MapRGB(image_surface->format, 255, 0, 0);
+    Uint32 green = SDL_MapRGB(image_surface->format, 0, 255, 0);
 
     detect_lines_array(array_h, image_surface->h);
     detect_lines_array(array_w, image_surface->w);
@@ -138,8 +165,10 @@ void detect_lines_v2(SDL_Surface *image_surface)
             SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
             if (array_h[i] == -1)
             {
-                put_pixel(image_surface, j, i, red);
+                put_pixel(image_surface, j, i, green);
             }
         }
     }
+    remove_background(image_surface, red);
+    remove_background(image_surface, green);
 }
