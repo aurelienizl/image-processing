@@ -33,7 +33,52 @@ void detect_lines_array(int *array, int len)
     }
 }
 
-void remove_background(SDL_Surface *image_surface, Uint32 pixel, Uint32 pixel2)
+void remove_background_path02(SDL_Surface *image_surface, Uint32 pixel2)
+{
+    Uint32 white = SDL_MapRGB(image_surface->format, 255, 255, 255);
+
+    int i = 0;
+    int j = 0;
+    int checked = 1;
+
+    while (i < image_surface->h && checked)
+    {
+        j = 0;
+        while (j < image_surface->w && checked)
+        {
+            if (get_pixel(image_surface, j, i) == pixel2)
+            {
+                checked = 0;
+                break;
+            }
+            put_pixel(image_surface, j, i, white);
+            j++;
+        }
+        i++;
+    }
+
+    i = image_surface->h - 1;
+    j = 0;
+    checked = 1;
+
+    while (i >= 0 && checked)
+    {
+        j = 0;
+        while (j < image_surface->w && checked)
+        {
+            if (get_pixel(image_surface, j, i) == pixel2)
+            {
+                checked = 0;
+                break;
+            }
+            put_pixel(image_surface, j, i, white);
+            j++;
+        }
+        i--;
+    }
+}
+
+void remove_background_path01(SDL_Surface *image_surface, Uint32 pixel)
 {
     Uint32 white = SDL_MapRGB(image_surface->format, 255, 255, 255);
 
@@ -72,46 +117,6 @@ void remove_background(SDL_Surface *image_surface, Uint32 pixel, Uint32 pixel2)
                 break;
             }
             put_pixel(image_surface, i, j, white);
-            j++;
-        }
-        i--;
-    }
-
-    i = 0;
-    j = 0;
-    checked = 1;
-
-    while (i < image_surface->h && checked)
-    {
-        j = 0;
-        while (j < image_surface->w && checked)
-        {
-            if (get_pixel(image_surface, j, i) == pixel2)
-            {
-                checked = 0;
-                break;
-            }
-            put_pixel(image_surface, j, i, white);
-            j++;
-        }
-        i++;
-    }
-
-    i = image_surface->h - 1;
-    j = 0;
-    checked = 1;
-
-    while (i >= 0 && checked)
-    {
-        j = 0;
-        while (j < image_surface->w && checked)
-        {
-            if (get_pixel(image_surface, j, i) == pixel2)
-            {
-                checked = 0;
-                break;
-            }
-            put_pixel(image_surface, j, i, white);
             j++;
         }
         i--;
@@ -183,5 +188,6 @@ void detect_lines_v2(SDL_Surface *image_surface)
             }
         }
     }
-    remove_background(image_surface, red, green);
+    remove_background_path01(image_surface, red);
+    remove_background_path02(image_surface, green);
 }
