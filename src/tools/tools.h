@@ -15,4 +15,8 @@ Uint8 max_pixel(SDL_Surface *image_surface, int width, int height);
 Uint32 get_pixel(SDL_Surface *surface, unsigned x, unsigned y);
 
 int StayOnInterval256(int n);
+
+SDL_Surface *display_image(SDL_Surface *img);
+void wait_for_keypressed();
+
 #endif // FILTERS_TOOLS_H
