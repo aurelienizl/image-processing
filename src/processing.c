@@ -2,6 +2,10 @@
 #include "segmentation/segmentation.h"
 #include "tools/tools.h"
 
+// image processing parameters
+int contrast = -10;
+int binarise = 40;
+
 void init_sdl()
 {
     // Init only the video part.
@@ -33,8 +37,8 @@ void save(SDL_Surface *image_surface)
 
 void applyFilters(SDL_Surface *image_surface)
 {
-    contrast_v1(image_surface, 20);
-    binarize(image_surface, 20);
+    contrast_v1(image_surface, contrast);
+    binarize(image_surface, binarise);
     invert(image_surface);
     save(image_surface);
 }

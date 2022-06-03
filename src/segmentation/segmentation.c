@@ -1,9 +1,10 @@
 #include "../tools/tools.h"
 
+int lines_min_scale = 30;
+int lines = 10;
+
 void detect_lines_array(int *array, int len)
 {
-    int lines = 10;
-    int lines_scale = 30;
     for (int i = 0; i < lines; i++)
     {
         int max = array[0];
@@ -18,7 +19,7 @@ void detect_lines_array(int *array, int len)
             }
         }
         array[index] = -1;
-        for (int i = 1; i < lines_scale; i++)
+        for (int i = 1; i < lines_min_scale; i++)
         {
             if (index + i < len)
             {
