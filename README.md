@@ -1,6 +1,6 @@
 # IMG-PROCESS
 
-IMG-Process is image manipulation project. This project brings together a set of filter functions allowing the manipulation of digital images. 
+IMG-Process isa sudoku image manipulation project. This project brings together a set of filter functions and segmentation function allowing the manipulation of digital sudoku images in order to resolve them. 
 
 ## Installation
 
@@ -14,7 +14,7 @@ sudo apt install libsdl1.2-dev
 
 ```sh
 make;
-./processing [Image path]
+./processing [Image path] [Mode]
 ```
 
 ## Contributing
