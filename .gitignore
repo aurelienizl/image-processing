@@ -59,3 +59,5 @@ dkms.conf
 .vscode/settings.json
 .vscode/targets.log
 src/.vscode/settings.json
+src/output.bmp
+src/launch.sh
