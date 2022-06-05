@@ -38,7 +38,9 @@ void save(SDL_Surface *image_surface)
 void applyFilters(SDL_Surface *image_surface)
 {
     contrast_v1(image_surface, contrast);
+    blur(image_surface, 1);
     binarize(image_surface, binarise);
+    noiseReduction_v2(image_surface, 5);
     invert(image_surface);
     save(image_surface);
 }
