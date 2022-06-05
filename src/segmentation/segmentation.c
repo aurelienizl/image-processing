@@ -9,25 +9,25 @@ void detect_lines_array(int *array, int len)
     {
         int max = array[0];
         int index = 0;
-        for (int i = 0; i < len; i++)
+        for (int j = 0; j < len; j++)
         {
 
-            if (array[i] >= max)
+            if (array[j] >= max)
             {
-                max = array[i];
-                index = i;
+                max = array[j];
+                index = j;
             }
         }
         array[index] = -1;
-        for (int i = 1; i < lines_min_scale; i++)
+        for (int k = 1; k < lines_min_scale; k++)
         {
-            if (index + i < len)
+            if (index + k < len)
             {
-                array[index + i] = 0;
+                array[index + k] = 0;
             }
-            if (index - i >= 0)
+            if (index - k >= 0)
             {
-                array[index - i] = 0;
+                array[index - k] = 0;
             }
         }
     }
