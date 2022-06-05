@@ -6,17 +6,16 @@
 #include <err.h>
 #include <SDL/SDL_image.h>
 
+// Filters functions:
 
-//Filters functions:
-
-void grayscale(SDL_Surface* screen);
-void contrast_v1(SDL_Surface* img, int delta);
+void grayscale(SDL_Surface *screen);
+void contrast_v1(SDL_Surface *img, int delta);
 void invert(SDL_Surface *image_surface);
 void edges_detection(SDL_Surface *image_surface, int threshold);
-void noiseReduction(SDL_Surface *surface);
+void noiseReduction_v1(SDL_Surface *surface);
+void noiseReduction_v2(SDL_Surface *image_surface, int delta);
 void blur(SDL_Surface *image_surface, int delta);
 void otsu(SDL_Surface *image_surface);
 void binarize(SDL_Surface *image_surface, int delta);
-
 
 #endif

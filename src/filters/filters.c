@@ -153,8 +153,60 @@ void blur(SDL_Surface *image_surface, int delta)
     }
 }
 
+Uint32 noiseReduction_v2_average(SDL_Surface *image_surface, int array[])
+{
+    for (int i = 0; i < 9; i++)
+    {
+        for (int j = i + 1; j < 9; j++)
+        {
+            if (array[j] < array[i])
+            {
+                int tmp = array[j];
+                array[j] = array[i];
+                array[i] = tmp;
+            }
+        }
+    }
+    Uint32 white = SDL_MapRGB(image_surface->format, 255, 255, 255);
+    Uint32 black = SDL_MapRGB(image_surface->format, 0, 0, 0);
+
+    Uint8 r, g, b;
+    SDL_GetRGB(array[4], image_surface->format, &r, &g, &b);
+    if (r == 0)
+    {
+        return black;
+    }
+    return white;
+}
+
+void noiseReduction_v2(SDL_Surface *image_surface, int delta)
+{
+    for (int iteration = 0; iteration < delta; iteration++)
+    {
+        int array[9];
+        SDL_Surface *blur_surface = image_surface;
+        for (int i = 1; i < image_surface->w - 1; i++)
+        {
+            for (int j = 1; j < image_surface->h - 1; j++)
+            {
+                int index = 0;
+                for (int k = i - 1; k <= i + 1; k++)
+                {
+                    for (int l = j - 1; l <= j + 1; l++)
+                    {
+                        array[index] = get_pixel(image_surface, k, l);
+                        index++;
+                    }
+                }
+                put_pixel(blur_surface, i, j, noiseReduction_v2_average(image_surface, array));
+            }
+        }
+        *image_surface = *blur_surface;
+    }
+}
+
 // Reduce noise (works only for 1x1 pixel and binarized surface)
-void noiseReduction(SDL_Surface *image_surface)
+void noiseReduction_v1(SDL_Surface *image_surface)
 {
     int table[5];
 
@@ -258,17 +310,17 @@ void noiseReduction(SDL_Surface *image_surface)
     }
 }
 
-//Apply simple binarization using simple comparaison to average surface pixel value
-//Works better on grayscale image 
+// Apply simple binarization using simple comparaison to average surface pixel value
+// Works better on grayscale image
 void binarize(SDL_Surface *image_surface, int delta)
 {
-    Uint8 r,g,b;
+    Uint8 r, g, b;
     unsigned long red = 0, green = 0, blue = 0, average;
     for (int i = 0; i < image_surface->w; i++)
     {
         for (int j = 0; j < image_surface->h; j++)
         {
-            Uint32 pixel = get_pixel(image_surface,i,j);
+            Uint32 pixel = get_pixel(image_surface, i, j);
             SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
             red += r;
             green += g;
@@ -284,7 +336,7 @@ void binarize(SDL_Surface *image_surface, int delta)
             Uint32 pixel = get_pixel(image_surface, i, j);
             SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
 
-            if ((unsigned long) ((r + g + b)/3) > average)
+            if ((unsigned long)((r + g + b) / 3) > average)
             {
                 r = 0;
                 g = 0;
@@ -296,15 +348,11 @@ void binarize(SDL_Surface *image_surface, int delta)
                 g = 255;
                 b = 255;
             }
-            
-            
 
             pixel = SDL_MapRGB(image_surface->format, r, g, b);
             put_pixel(image_surface, i, j, pixel);
         }
-        
     }
-    
 }
 
 // Create a histogram
